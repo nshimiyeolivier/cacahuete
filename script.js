@@ -10,7 +10,7 @@ document.getElementById('participantForm').addEventListener('submit', function(e
 function generateRegistrationLinks(num) {
     links = [];
     for (let i = 1; i <= num; i++) {
-        const link = `https://example.com/register?participant=${i}`;
+        const link = `https://nshimiyeolivier.github.io/cacahuete/register?participant=${i}`;
         links.push(link);
     }
     displayLinks();
