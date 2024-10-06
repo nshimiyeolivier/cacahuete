@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Échange de Cadeaux</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Organisateur d'Échange de Cadeaux</h1>
+        <form id="participantForm">
+            <label for="numParticipants">Nombre de participants:</label>
+            <input type="number" id="numParticipants" min="2" required>
+
+            <button type="submit">Générer les liens d'inscription</button>
+        </form>
+
+        <div id="registrationLinks" style="display: none;">
+            <h2>Envoyez ces liens aux participants :</h2>
+            <div id="linksContainer"></div>
+        </div>
+
+        <div id="participantFormSection" style="display: none;">
+            <h2>Inscription des participants</h2>
+            <form id="userForm">
+                <label for="name">Nom:</label>
+                <input type="text" id="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                <button type="submit">S'inscrire</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
