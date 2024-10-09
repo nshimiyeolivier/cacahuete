@@ -4,35 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Échange de Cadeaux</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles CSS */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Organisateur d'Échange de Cadeaux</h1>
-        <form id="participantForm">
-            <label for="numParticipants">Nombre de participants:</label>
-            <input type="number" id="numParticipants" min="2" required>
+        <form id="eventForm">
+            <label for="eventName">Nom de l'événement:</label>
+            <input type="text" id="eventName" required>
 
-            <button type="submit">Générer les liens d'inscription</button>
+            <h2>Participants</h2>
+            <div id="participants">
+                <div class="participant">
+                    <input type="text" placeholder="Nom" class="name" required>
+                    <input type="email" placeholder="Email" class="email" required>
+                </div>
+            </div>
+            <button type="button" id="addParticipant">Ajouter un participant</button>
+            <button type="submit">Envoyer l'invitation</button>
         </form>
 
-        <div id="registrationLinks" style="display: none;">
-            <h2>Envoyez ces liens aux participants :</h2>
-            <div id="linksContainer"></div>
-        </div>
-
-        <div id="participantFormSection" style="display: none;">
-            <h2>Inscription des participants</h2>
-            <form id="userForm">
-                <label for="name">Nom:</label>
-                <input type="text" id="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" required>
-                <button type="submit">S'inscrire</button>
-            </form>
+        <div id="confirmation" class="hidden">
+            <h2>Confirmation de participation</h2>
+            <p>Merci d'avoir confirmé votre participation ! Vous recevrez bientôt les détails.</p>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Script JavaScript pour gérer le formulaire et envoyer les données au serveur backend
+        document.getElementById('addParticipant').addEventListener('click', function() {
+            const participantsDiv = document.getElementById('participants');
+            const newParticipant = document.createElement('div');
+            newParticipant.classList.add('participant');
+            newParticipant.innerHTML = `
+                <input type="text" placeholder="Nom" class="name" required>
+                <input type="email" placeholder="Email" class="email" required>
+            `;
+            participantsDiv.appendChild(newParticipant);
+        });
+
+        document.getElementById('eventForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêche l'envoi du formulaire
+
+            const eventName = document.getElementById('eventName').value;
+            const participants = document.querySelectorAll('.participant');
+            const participantList = [];
+
+            participants.forEach(participant => {
+                const name = participant.querySelector('.name').value;
+                const email = participant.querySelector('.email').value;
+                participantList.push({ name, email });
+            });
+
+            // Logique pour attribuer les cadeaux
+            const gifts = assignGifts(participantList);
+
+            // Envoyer les données au backend
+            fetch('http://localhost:3000/send-emails', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    eventName: eventName,
+                    participants: gifts
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                document.getElementById('confirmation').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+
+            // Réinitialiser le formulaire
+            document.getElementById('eventForm').reset();
+            document.getElementById('participants').innerHTML = `<div class="participant"><input type="text" placeholder="Nom" class="name" required><input type="email" placeholder="Email" class="email" required></div>`;
+        });
+
+        // Fonction pour attribuer les cadeaux
+        function assignGifts(participants) {
+            const shuffled = participants.slice(); // Créer une copie pour ne pas modifier l'original
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Mélange des participants
+            }
+
+            return participants.map((participant, index) => ({
+                giver: participant,
+                receiver: shuffled[index === shuffled.length - 1 ? 0 : index + 1] // Le dernier donne au premier
+            }));
+        }
+    </script>
 </body>
 </html>
