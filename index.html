@@ -113,7 +113,7 @@
             const gifts = assignGifts(participantList);
 
             // Envoyer les données au backend
-            fetch('https://nshimiyeolivier.github.io/cacahuete/index.html/send-emails', {
+            fetch('http://localhost:5500/send-emails', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -128,9 +128,9 @@
                 console.log(data.message);
                 document.getElementById('confirmation').classList.remove('hidden');
             })
-            .catch(error => {
+           /* .catch(error => {
                 console.error('Erreur:', error);
-            });
+            });*/
 
             // Réinitialiser le formulaire
             document.getElementById('eventForm').reset();

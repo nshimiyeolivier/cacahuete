@@ -6,7 +6,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5500;
 
 // Middleware
 app.use(cors());
@@ -32,7 +32,7 @@ app.post('/send-emails', async (req, res) => {
             const receiver = participants[i].receiver;
 
             let mailOptions = {
-                from: 'votreemail@gmail.com',
+                from: 'kasimbafm@gmail.com',
                 to: giver.email, // Email du donneur
                 subject: `Échange de cadeaux - ${eventName}`,
                 text: `Bonjour ${giver.name},\n\nVous allez offrir un cadeau à: ${receiver.name}.\n\nBon échange de cadeaux!`
